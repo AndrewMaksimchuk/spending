@@ -1,0 +1,6 @@
+- [+] git
+- [+] makefile
+- [-] database
+- [-] registration
+- [-] autorization
+- [-] tests

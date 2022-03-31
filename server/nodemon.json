@@ -1,0 +1,7 @@
+{
+    "ignore": ["node_modules"],
+    "restartable": "rs",
+    "env": {
+        "NODE_ENV": "development"
+    }
+}
