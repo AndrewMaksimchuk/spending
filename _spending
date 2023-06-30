@@ -1,0 +1,7 @@
+#compdef spending
+# Add competion for shell(zsh)
+
+
+local -a subcmds
+subcmds=("add" "total")
+_describe 'command' subcmds

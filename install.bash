@@ -11,3 +11,11 @@ echo "Now you have 'spending' application."
 
 
 [[ ! -e $cwd/spending ]] && ln -s $cwd/spending.bash $cwd/spending
+
+
+cp -f $cwd/spending_complete /etc/bash_completion.d/
+
+
+if [[ -d /usr/share/zsh/vendor-completions/ ]]; then
+    cp -f $cwd/_spending /usr/share/zsh/vendor-completions/
+fi

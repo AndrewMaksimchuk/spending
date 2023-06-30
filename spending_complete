@@ -1,0 +1,9 @@
+# Add competion for shell(bash)
+
+
+function _spending() {
+    COMPREPLY=("add" "total")
+}
+
+
+complete -F _spending spending

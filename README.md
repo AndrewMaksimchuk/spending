@@ -16,7 +16,8 @@ all next, from line separetion, is optional.
 
 ## Install
 
-Run `./install.bash` script to see steps + create simlynk.  
+Run script `./install.bash` with `sudo` to see  
+steps + create simlynk + shell completion(bash/zsh).    
 
 - Add to yout shell config file: "SPENDING_INSTALL=path_to_this_directory"
 - Then add "export PATH=$PATH:$SPENDING_INSTALL"
