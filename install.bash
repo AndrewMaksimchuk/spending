@@ -2,15 +2,26 @@
 
 
 cwd=$(dirname $0)
+path=$(readlink -f $cwd)
 
 
-echo "Add to yout shell config file: 'SPENDING_INSTALL=path_to_this_directory'"
-echo 'Then add "export PATH=$PATH:$SPENDING_INSTALL"'
-echo "Save and reload config file."
-echo "Now you have 'spending' application."
+function addpath() {
+    user=$(who -s | head -1 | awk '{print $1}')
+    config=$(echo "/home/$user/$1")
+
+    [[ ! -e $config ]] && return 0
+
+    is_set_env=$(cat $config | grep "SPENDING_INSTALL")
+    [[ -n $is_set_env ]] && return 0
+
+    echo >> $config
+    echo "export SPENDING_INSTALL=\"$path\"" >> $config
+    echo 'export PATH="$PATH:$SPENDING_INSTALL"' >> $config
+}
 
 
-[[ ! -e $cwd/spending ]] && ln -s $cwd/spending.bash $cwd/spending
+addpath ".bashrc"
+addpath ".zshrc"
 
 
 cp -f $cwd/spending_complete /etc/bash_completion.d/

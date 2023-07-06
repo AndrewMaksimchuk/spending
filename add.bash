@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
 
-# Open nvim with empty file for add content of
-# receipt.
-# After add all information, run `:xa` for exit 
-# and save document.
+usage='Open nvim with empty file for add content of
+receipt.
+After add all information, run `:xa` for exit 
+and save document.
+Agruments:
+  $1 - "help" show this message'
+
+
+if [[ $1 = "help" ]]; then
+    echo "$usage"
+    exit
+fi
 
 
 cwd=$(dirname $0)

@@ -28,3 +28,9 @@ steps + create simlynk + shell completion(bash/zsh).
 ## Usage
 
 See [usage](usage.md) 
+
+
+## Additional functions
+###### Run only from this project directory
+
+`show_last_n_days.bash` - Show last added receipts n days ago  

@@ -8,6 +8,8 @@
 # put list of receipts like argument to this script.
 # Example: ./total.bash "file1 file2 file3"
 # App command: spending total "file1 file2 file3"
+# 
+# $1 - list of files name(without full path)
 
 
 cwd=$(dirname $0)
@@ -16,14 +18,14 @@ cwd=$(dirname $0)
 . $cwd/list.bash
 
 
-tmp=$(echo $projectdir/tmp/total)
+tmp=$(echo $cwd/tmp/total)
 
 
 function total() {
     rm -f $tmp
     for file in $1
     do
-        filepath=$(echo "$projectdir/receipts/$file")
+        filepath=$(echo "$cwd/receipts/$file")
         if [[ -e $filepath ]]; then
             cost=$(sed -n '3p' $filepath)
             echo $cost >> $tmp

@@ -1,1 +1,46 @@
-./spending.bash
+#!/usr/bin/env bash
+
+
+cwd=$(dirname $0)
+
+
+. $cwd/usage.bash
+
+
+if [ $# -eq 0 ]; then
+    usage
+    exit
+fi
+
+
+case $1 in 
+
+  "add")
+    "$cwd/add.bash"
+    ;;
+
+  "total") 
+    "$cwd/total.bash"
+    ;;
+
+    "show_day") 
+    "$cwd/show_day.bash" $2 $3 $4
+    ;;
+
+    "show_month") 
+    "$cwd/show_month.bash" $2 $3
+    ;;
+
+    "show_year") 
+    "$cwd/show_year.bash" $2
+    ;;
+
+    "show_shop") 
+    "$cwd/show_shops.bash"
+    ;;
+
+  *) 
+    echo "Command not valid"
+    usage 
+    ;; 
+esac

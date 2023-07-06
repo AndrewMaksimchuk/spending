@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 
-. list.bash
+[[ -z $1 ]] && return
+
+
+projectdir=$(dirname $0)
 
 
 file=$(echo "$projectdir/receipts/$1")

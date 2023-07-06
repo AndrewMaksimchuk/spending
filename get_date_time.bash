@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 
 
-. projectdir.bash
-
-
-
 function get_date_time() {
-    file=$(echo "$projectdir/receipts/$1")
-
-
-    if [[ -e $file ]]; then
-        sed -n '2p' $file
+    if [[ -e $1 ]]; then
+        sed -n '2p' $1
     fi
-
 }

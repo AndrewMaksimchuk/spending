@@ -3,5 +3,5 @@
 
 
 local -a subcmds
-subcmds=("add" "total")
+subcmds=("add" "total" "show_day" "show_month" "show_year" "show_shop")
 _describe 'command' subcmds
