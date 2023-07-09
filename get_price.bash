@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 
-. projectdir.bash
-
+projectdir=$(dirname $0)
 
 
 function get_price() {

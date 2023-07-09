@@ -39,6 +39,10 @@ case $1 in
     "$cwd/show_shops.bash"
     ;;
 
+    "stat") 
+    "$cwd/statistics.bash"
+    ;;
+
   *) 
     echo "Command not valid"
     usage 

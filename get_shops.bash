@@ -26,5 +26,8 @@ function prints() {
 
 function get_shops() {
     files=$(echo $projectdir/receipts/*)
-    prints "$files" | sort | uniq
+    tmp=$(echo $projectdir/tmp/shop_list)
+    
+    rm -f $tmp
+    prints "$files" | sort | uniq | tee $tmp
 }

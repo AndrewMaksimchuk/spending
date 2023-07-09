@@ -35,6 +35,8 @@ function get_month() {
         fi
     done
 
+    [[ ! -e $tmp ]] && exit
+
     less $tmp
     total_by $tmp
 }
