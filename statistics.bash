@@ -201,6 +201,7 @@ function print_dashboard
     local headers_mean_median_range=$(echo "$data_mean_median_range" | awk '{print $1, $3, $5, $7}' | head -1 | tr ":" "," | tr -d " ")
     local board_mean_median_range=$(echo "$data_mean_median_range" | awk '{print $2, $4, $6, $8}' | column -t -N "$headers_mean_median_range")
 
+    echo
     echo "$board_mean_median_range"
     echo
 
@@ -219,6 +220,19 @@ function print_dashboard
 }
 
 
+function work
+{
+    echo -n "Working"
+    while true
+    do
+        local v=$(jobs | grep 'Done')
+        [[ -z $v ]] && echo -n "."
+        [[ -n $v ]] && echo && break
+        sleep 1
+    done
+}
+
+
 function main
 {
     mean_median_range >> $tmp
@@ -233,4 +247,5 @@ function main
 }
 
 
-main
+main &
+work
