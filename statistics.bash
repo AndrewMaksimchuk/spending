@@ -195,6 +195,12 @@ function put_empty_line
 }
 
 
+function put_header
+{
+    echo -e "\033[1;4m$1\033[0m"
+}
+
+
 function print_dashboard
 {
     local data_mean_median_range=$(pr -ats" " --columns 5 $projectdir/tmp/mean_median_range)
@@ -202,6 +208,8 @@ function print_dashboard
     local board_mean_median_range=$(echo "$data_mean_median_range" | awk '{print $2, $4, $6, $8}' | column -t -N "$headers_mean_median_range")
 
     echo
+    echo
+    put_header 'Average values for months'
     echo "$board_mean_median_range"
     echo
 
@@ -210,12 +218,12 @@ function print_dashboard
         "$projectdir/tmp/frequency_tables" 
         "$projectdir/tmp/relative_frequency_tables" 
     )
-    # frequency_tables
-    # relative_frequency_tables
+    # frequency_tables relative_frequency_tables
     paste ${files[@]} | column -t -N 'shop,receipts,shop,receipts'
     echo
 
     # cumulative_frequency_tables
+    put_header 'Cumulative frequency tables'
     column -t -N 'cost,receipts' $tmp_cumulative_frequency_tables
 }
 
