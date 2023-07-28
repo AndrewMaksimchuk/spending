@@ -213,18 +213,25 @@ function print_dashboard
     echo "$board_mean_median_range"
     echo
 
-    files=(
-        # "$projectdir/tmp/cumulative_frequency_tables"
-        "$projectdir/tmp/frequency_tables" 
-        "$projectdir/tmp/relative_frequency_tables" 
-    )
-    # frequency_tables relative_frequency_tables
-    paste ${files[@]} | column -t -N 'shop,receipts,shop,receipts'
-    echo
+    local done_table_frequency_tables="$projectdir/tmp/frequency_table"
+    put_header 'Frequency table' > $done_table_frequency_tables
+    column -t -N 'shop,receipts' $tmp_frequency_tables >> $done_table_frequency_tables
+
+    local done_table_relative_frequency_tables="$projectdir/tmp/relative_frequency_table"
+    put_header 'Relative frequency table' > $done_table_relative_frequency_tables
+    column -t -N 'shop,receipts' $tmp_relative_frequency_tables >> $done_table_relative_frequency_tables
 
     # cumulative_frequency_tables
-    put_header 'Cumulative frequency tables'
-    column -t -N 'cost,receipts' $tmp_cumulative_frequency_tables
+    local done_table_cumulative_frequency_tables="$projectdir/tmp/cumulative_frequency_table"
+    put_header 'Cumulative frequency table' > $done_table_cumulative_frequency_tables
+    column -t -N 'cost,receipts' $tmp_cumulative_frequency_tables >> $done_table_cumulative_frequency_tables
+
+    files=(
+        $done_table_frequency_tables 
+        $done_table_relative_frequency_tables 
+        $done_table_cumulative_frequency_tables 
+    )
+    paste ${files[@]} | column -s $'\t' -t
 }
 
 
