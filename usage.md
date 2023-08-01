@@ -10,3 +10,4 @@ show_year                             show all receipts in specified year
 show_shop                             show all receipts from selected shop
 stat                                  show statistics
 history                               show history by months
+goods                                 show list of goods

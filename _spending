@@ -12,5 +12,6 @@ subcmds=(
  'show_shop:show all receipts from selected shop' 
  'stat:show statistics' 
  'history:show history by months' 
+ 'goods:show list of goods' 
 )
 _describe 'command' subcmds
