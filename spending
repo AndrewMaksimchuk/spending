@@ -43,6 +43,10 @@ case $1 in
     "$cwd/statistics.bash"
     ;;
 
+    "history") 
+    "$cwd/history.bash" $2 $3
+    ;;
+
   *) 
     echo "Command not valid"
     usage 
