@@ -11,3 +11,4 @@ show_shop                             show all receipts from selected shop
 stat                                  show statistics
 history                               show history by months
 goods                                 show list of goods
+salary                                the amount of expenses for each month

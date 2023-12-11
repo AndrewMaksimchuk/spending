@@ -51,6 +51,10 @@ case $1 in
     "$cwd/goods.bash"
     ;;
 
+    "salary")
+      "$cwd/salary.bash" $2
+    ;;
+
   *) 
     echo "Command not valid"
     usage 
