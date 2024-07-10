@@ -13,6 +13,17 @@ Agruments:
   $1 - "help" show this message'
 
 
+function check_is_new_shop_exist() {
+  local last_shop_name=$(get_shop "$1")
+  local shop_list=$(echo $projectdir/tmp/shop_list)
+  local shops_counter=$(grep "$last_shop_name" $shop_list | wc -l)
+
+  if [[ $shops_counter -eq 0 ]]; then
+    rm -f $shop_list
+  fi
+}
+
+
 if [[ $1 = "help" ]]; then
     echo "$usage"
     exit
@@ -35,6 +46,8 @@ do
 
     vi +start -O $path $tempfile
     [[ -e $path ]] && echo "$uuid was added" && echo "$path"
+
+    check_is_new_shop_exist "$uuid"    
 
     prompt="Add another receipt y/n: "
     read -p "$prompt" input

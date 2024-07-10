@@ -8,7 +8,7 @@ projectdir=$(dirname $0)
 
 
 function prints() {
-    tmp=$(echo $projectdir/tmp/shops)
+    local tmp=$(echo $projectdir/tmp/shops)
 
     rm -f $tmp
 
@@ -25,9 +25,13 @@ function prints() {
 
 
 function get_shops() {
-    files=$(echo $projectdir/receipts/*)
-    tmp=$(echo $projectdir/tmp/shop_list)
-    
-    rm -f $tmp
+    local tmp=$(echo $projectdir/tmp/shop_list)
+
+    if [[ -e $tmp ]]; then
+        cat $tmp
+        exit
+    fi
+
+    local files=$(echo $projectdir/receipts/*)
     prints "$files" | sort | uniq | tee $tmp
 }
