@@ -4,14 +4,21 @@
 atb  
 18.07.2023 18:23:33  
 243.71  
--------------------  
+=
 молоко  
 батон  
 морозиво  
+=
+image=image_name_of_receipt_example_atb.26.09.2022.15.29.32.jpg
 ```
 
 First 3 lines is required,  
 all next, from line separetion, is optional.  
+
+Image of receipt must be saved to 
+`project_directory/receipts_images` directory. 
+The best image name is: shop_name.date.time, 
+like in example above.
 
 
 ## Install
