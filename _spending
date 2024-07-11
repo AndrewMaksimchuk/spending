@@ -14,5 +14,6 @@ subcmds=(
  'history:show history by months' 
  'goods:show list of goods' 
  'salary:the amount of expenses for each month'
+ 'archive:pack or unpack receipts archive'
 )
 _describe 'command' subcmds

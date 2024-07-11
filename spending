@@ -15,11 +15,11 @@ fi
 
 case $1 in 
 
-  "add")
+    "add")
     "$cwd/add.bash"
     ;;
 
-  "total") 
+    "total") 
     "$cwd/total.bash"
     ;;
 
@@ -52,10 +52,14 @@ case $1 in
     ;;
 
     "salary")
-      "$cwd/salary.bash" $2
+    "$cwd/salary.bash" $2
     ;;
 
-  *) 
+    "archive")
+    "$cwd/archive.bash" $2 $3
+    ;;
+
+    *) 
     echo "Command not valid"
     usage 
     ;; 
