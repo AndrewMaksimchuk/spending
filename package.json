@@ -1,0 +1,10 @@
+{
+  "name": "spending",
+  "description": "Web server for load and save receipts images",
+  "main": "web_server.js",
+  "type": "module",
+  "dependencies": {
+    "@types/node": "^20.14.10",
+    "formidable": "^3.5.1"
+  }
+}

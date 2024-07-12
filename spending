@@ -59,6 +59,10 @@ case $1 in
     "$cwd/archive.bash" $2 $3
     ;;
 
+    "image")
+    "$cwd/image.bash"
+    ;;
+
     *) 
     echo "Command not valid"
     usage 

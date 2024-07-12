@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spending - save receipts</title>
+    <style>
+        * {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <form action="/" method="POST" enctype="multipart/form-data" style="width: 100%; display: grid; grid-template-columns: 1fr; margin-top: 25vmin;">
+        <label for="receiptImages" style="font-size: 2rem; padding-bottom: 1rem;">Select photos of receipts</label><br>
+        <input type="file" name="receipts" id="receiptImages" multiple style="font-size: 2rem;"><br>
+        <input type="submit" value="Send" style="font-size: 2rem;">
+    </form>
+    <script>
+        window.addEventListener("unload", function() {
+            navigator.sendBeacon("/close");
+        });
+    </script>
+</body>
+</html>

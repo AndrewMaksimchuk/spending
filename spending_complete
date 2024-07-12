@@ -2,7 +2,7 @@
 
 
 function _spending() {
-    COMPREPLY=("add" "total" "show_day" "show_month" "show_year" "show_shop" "stat" "history" "goods" "salary" "archive")
+    COMPREPLY=("add" "total" "show_day" "show_month" "show_year" "show_shop" "stat" "history" "goods" "salary" "archive" "image")
 }
 
 
