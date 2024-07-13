@@ -1,5 +1,5 @@
 import { createServer } from "node:http"
-import { readFileSync } from "node:fs"
+import { readFileSync, createWriteStream } from "node:fs"
 import { join, sep } from "node:path"
 import formidable from 'formidable';
 
@@ -19,10 +19,18 @@ const CONTENT = {
     index: readFileSync(PAGES.index, { encoding: "utf-8" }),
 }
 
+function createLogger() {
+    const file = createWriteStream(join(process.cwd(), "web_server.log.txt"), { encoding: "utf8", flags: "a" });
+    const setDate = (now) => now.toLocaleString()
+    const log = (messsage) => file.write(`[LOG] [${setDate(new Date())}] ${messsage}\n`)
+    const error = (error) => file.write(`${error}\n`)
+    return { end: () => file.end(), log, error };
+}
+
 function writePageIndex(response, element) {
     response.setHeader("Content-Type", "text/html")
     response.writeHead(200)
-    
+
     if(element) {
         const spliter = '</form>'
         const [head, tail] = CONTENT.index.split(spliter)
@@ -36,14 +44,19 @@ function writePageIndex(response, element) {
     response.end()
 }
 
-const requestHandler = async (request, response) => {
+const logger = createLogger()
+const server = createServer()
+
+async function requestHandler (request, response) {
     const { url, method } = request
 
     if (URLS.index === url && 'GET' === method) {
+        logger.log('Request to get index page')
         writePageIndex(response)
     }
 
     if (URLS.index === url && 'POST' === method) {
+        logger.log('Request to save photos')
         const form = formidable({
             uploadDir: saveToPath,
             keepExtensions: true,
@@ -53,10 +66,19 @@ const requestHandler = async (request, response) => {
     }
 
     if (URLS.close === url) {
-        process.exit()
+        logger.log('Request to close application')
+        server.close()
+        setTimeout(() => server.closeAllConnections(), 3000)
+        return response.end();
     }
 }
 
-const server = createServer()
 server.on('request', requestHandler)
+server.on("error", (error) => logger.error(error))
+server.on("close", () => {
+    logger.log('Application close')
+    logger.end()
+    process.exit()
+})
 server.listen(port)
+logger.log('Application start')

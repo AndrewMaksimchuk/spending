@@ -66,12 +66,9 @@
         <label for="receiptImages">Select photos of receipts</label><br>
         <input type="file" name="receipts" id="receiptImages" multiple style="font-size: 2rem;"><br>
         <input type="submit" value="Send">
+        <input type="submit" value="Close" formaction="/close">
     </form>
     <script>
-        window.addEventListener("unload", function() {
-            navigator.sendBeacon("/close");
-        });
-
         window.addEventListener("DOMContentLoaded", () => {
             const paragraph = document.getElementsByTagName("p").item(0);
             paragraph && setTimeout(() => paragraph.remove(), 5000);
