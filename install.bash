@@ -19,6 +19,7 @@ function addpath() {
     echo 'export PATH="$PATH:$SPENDING_INSTALL"' >> $config
 }
 
+mkdir "$path/tmp"
 
 addpath ".bashrc"
 addpath ".zshrc"
