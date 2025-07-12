@@ -63,6 +63,14 @@ case $1 in
     "$cwd/image.bash"
     ;;
 
+    "web_server_start")
+    "$cwd/web_server_service_start.bash"
+    ;;
+
+    "web_server_stop")
+    systemctl stop spending
+    ;;
+
     *) 
     echo "Command not valid"
     usage 
