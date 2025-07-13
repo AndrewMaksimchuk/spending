@@ -31,20 +31,44 @@ function formated {
     echo "$table" >$file_history
 }
 
+function spending_month_summary_calculation {
+    # $1 - content of history file
+    # $2 - number of month
+    local spending_month_summary=0
+
+    echo "$1" | while read line;
+    do
+        local month_line=$(echo "$line" | cut -d. -f2)
+        if [[ $month_line = $2 ]]; then
+            local current_receipt_price=$(echo "$line" | awk '{print $3}')
+            spending_month_summary=$(echo "$spending_month_summary + $current_receipt_price" | bc)
+            echo "$spending_month_summary"
+        fi
+    done
+}
+
+function spending_data_month_calculation {
+        cat "$file_history" | tail -n +2 | while read line; do
+            local month_line=$(echo $line | cut -d. -f2)
+            if [[ $month_line = $1 ]]; then
+                echo $line
+            fi
+        done
+}
+
 function main {
     formated
+
+    local content_of_history_file=$(cat "$file_history" | tail -n +2)
+
     for value in $(seq -w 01 $current_month); do
+        local spending_month_summary=$(spending_month_summary_calculation "$content_of_history_file" "$value" | tail -n -1)
         local current_month_name=$(echo $month_names | cut -d ';' -f $value)
 
         echo $current_month_name
         echo '=========='
-        local data_month=$(cat "$file_history" | tail -n +2 | while read line; do
-            local month_line=$(echo $line | cut -d. -f2)
-            if [[ $month_line = $value ]]; then
-                echo $line
-            fi
-        done)
-        echo "$data_month" | column -t -R 3
+        spending_data_month_calculation $value | column -t -R 3
+        echo "summary     $spending_month_summary"
         echo
     done
 }
