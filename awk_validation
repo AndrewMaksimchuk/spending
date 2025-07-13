@@ -1,0 +1,45 @@
+BEGIN {
+    errno = 0
+}
+
+NR == 1 { 
+    if (NF == 0) {
+        print "[ ERROR ] Store name missing"
+        errno = 1
+    }
+}
+
+NR == 2 {
+    if(!match($1, /^([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9])$/)) {
+        print "[ ERROR ] Date is in bad formatted, should be: dd/mm/yyyy"
+        errno = 1
+    }
+
+    if(!match($2, /^([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$/)) {
+        print "[ ERROR ] Time is in bad formatted, should be: hh:mm:ss"
+        errno = 1
+    }
+}
+
+NR == 3 {
+    if(!match($0, /^([0-9]+)\.([0-9][0-9]$)/)) {
+        print "[ ERROR ] Total amount of money is in bad formatted, should be: 234.00"
+        errno = 1
+    }
+}
+
+NR == 4 {
+    if ( length($0) > 1) {
+        print "[ ERROR ] Chunk separator must be only one character: ="
+        errno = 1
+    }
+}
+
+END {
+     if (errno) {
+        exit 1
+     }
+     exit 0
+}
+
+

@@ -54,6 +54,13 @@ See [usage](usage.md)
 
 ## Additional functions
 
+### Validation
+
+- store name
+- date and time
+- price
+- chunk delimeter
+
 ###### Run only from this project directory
 
 `show_last_n_days.bash` - Show last added  
