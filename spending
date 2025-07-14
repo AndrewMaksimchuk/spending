@@ -71,6 +71,10 @@ case $1 in
     systemctl stop spending
     ;;
 
+    "search")
+    "$cwd/search.bash" "$2"
+    ;;
+
     *) 
     echo "Command not valid"
     usage 

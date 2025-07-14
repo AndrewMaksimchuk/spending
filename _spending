@@ -18,5 +18,6 @@ subcmds=(
  'image:start web server for load and save receipts images'
  'web_server_start:start web server as service'
  'web_server_stop:stop web server as service'
+ 'search:search receipts by some text'
 )
 _describe 'command' subcmds
