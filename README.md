@@ -10,15 +10,22 @@ atb
 морозиво
 =
 image=image_name_of_receipt_example_atb.26.09.2022.15.29.32.jpg
+category=лікування
 ```
 
 First 3 lines is required,  
-all next, from line separetion, is optional.
+all next, from line separetion(symbol =), is optional.
 
 Image of receipt must be saved to
 `project_directory/receipts_images` directory.  
 The best image name is: shop_name.date.time,
 like in example above.
+
+To link the photo and the check together, write keyword `image=`  
+and write name of the photo(example above).
+
+For add category to the check, write keyword `category=`  
+and write category name as in example above.
 
 ## Install
 

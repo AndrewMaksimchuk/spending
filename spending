@@ -75,6 +75,10 @@ case $1 in
     "$cwd/search.bash" "$2"
     ;;
 
+    "category")
+    "$cwd/category.bash" "$2" "$3"
+    ;;
+
     *) 
     echo "Command not valid"
     usage 

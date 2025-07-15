@@ -17,3 +17,4 @@ image                                 start web server for load and save receipt
 web_server_start                      start web server as service
 web_server_stop                       stop web server as service
 search                                search receipts by some text
+category                              show/add expense categories
