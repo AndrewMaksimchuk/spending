@@ -40,7 +40,7 @@ case $1 in
     ;;
 
     "stat") 
-    "$cwd/statistics.bash"
+    "$cwd/statistics.bash" "$2"
     ;;
 
     "history") 

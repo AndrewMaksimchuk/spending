@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 
+# $1 - subcommands: "category"
+
+
 projectdir=$(dirname $0)
 tmp=$(echo $projectdir/tmp/statistics)
+spending_file_category="$projectdir/category_list" # filename get from category.bash, must be the same as in category.bash
 
 
 rm -f $tmp
@@ -11,6 +15,55 @@ rm -f $tmp
 . $projectdir/get_shops.bash
 . $projectdir/get_price.bash
 
+function spending_receipt_get_category
+{
+    sed -n '/^category=/p' $1 | cut -d= -f2
+}
+
+function spending_category
+{
+    local sp_file_category_tmp="$projectdir/tmp/statistics_category"
+    local sp_receipts_with_category=$(grep --files-with-matches --recursive 'category=' "$projectdir/receipts/")
+    local sp_category_list=$(cat $spending_file_category)
+
+    rm -f $sp_file_category_tmp
+    touch $sp_file_category_tmp
+
+    for sp_category in $sp_category_list
+    do
+        echo "$sp_category" >> $sp_file_category_tmp
+        for sp_receipt in $sp_receipts_with_category
+        do
+            sp_receipt_current_category=$(spending_receipt_get_category $sp_receipt)
+            if [[ $sp_category = $sp_receipt_current_category ]]; then
+                get_price $(basename $sp_receipt) >> $sp_file_category_tmp
+            fi
+        done
+        echo >> $sp_file_category_tmp
+    done
+
+    local sp_statistic_data_tmp=$(mktemp -d)
+    csplit --suppress-matched --elide-empty-files --prefix="$sp_statistic_data_tmp/" --silent $sp_file_category_tmp '/^$/' '{*}' # '/^$/' is empty line
+
+    rm -f $sp_file_category_tmp
+    touch $sp_file_category_tmp
+
+    for sp_file_tmp in $(ls $sp_statistic_data_tmp)
+    do
+        local sp_file_tmp_category=$(cat "$sp_statistic_data_tmp/$sp_file_tmp" | sed -n '1p')
+        local sp_file_tmp_prices=$(cat "$sp_statistic_data_tmp/$sp_file_tmp" | tail --lines=+2)
+        local sp_file_tmp_total_items_counter=$(echo "$sp_file_tmp_prices" | wc -l)
+        local sp_file_tmp_price_sum=$(echo "$sp_file_tmp_prices" | paste --serial --delimiters=+ | bc)
+
+        if [[ -z $sp_file_tmp_price_sum ]]; then
+            sp_file_tmp_price_sum=0
+        fi        
+
+        echo "$sp_file_tmp_category $sp_file_tmp_total_items_counter $sp_file_tmp_price_sum " >> $sp_file_category_tmp
+    done
+
+    column --table --table-columns Category,Shops,Total $sp_file_category_tmp
+}
 
 function mean
 {
@@ -213,6 +266,10 @@ function print_dashboard
     echo "$board_mean_median_range"
     echo
 
+    put_header 'By category'
+    spending_category
+    echo
+
     local done_table_frequency_tables="$projectdir/tmp/frequency_table"
     put_header 'Frequency table' > $done_table_frequency_tables
     column -t -N 'shop,receipts' $tmp_frequency_tables >> $done_table_frequency_tables
@@ -235,7 +292,7 @@ function print_dashboard
 }
 
 
-function work
+function spending_progress_bar_work
 {
     echo -n "Working"
     while true
@@ -261,6 +318,10 @@ function main
     print_dashboard
 }
 
+if [[ "$1" = "category" ]]; then
+    spending_category
+    exit
+fi
 
 main &
-work
+spending_progress_bar_work
