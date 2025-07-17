@@ -72,7 +72,7 @@ function mean
 
     n=$(echo $1 | wc -w)
     total_counter=$(echo "$1" | awk '{s+=$1}END{printf "%.2f\n", s}')
-    mean_value=$(bc <<< "scale=2; $total_counter / $n")
+    mean_value=$(echo "scale=2; $total_counter / $n" | sed 's/,/./g' | bc )
     echo "Mean: $mean_value"
 }
 
