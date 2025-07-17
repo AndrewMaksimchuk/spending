@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 
+LC_NUMERIC=en_US.UTF-8 # for correct work with numbers in awk
 projectdir=$(realpath `dirname $0`)
 tmp_table="$projectdir/tmp/table"
 all_receipts=$(cd $projectdir/receipts; ls -1 | xargs realpath)
