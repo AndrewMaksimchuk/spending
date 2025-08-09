@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 
-projectdir=$(dirname $0)
-. $projectdir/get_shops.bash
+projectdir=$(dirname "$0")
+. "$projectdir/get_shops.bash"
 
 
-usage='Open nvim with empty file for add content of
+usage="Open nvim with empty file for add content of
 receipt.
-After add all information, run `:xa` for exit 
+After add all information, run \`:xa\` for exit 
 and save document.
 Agruments:
-  $1 - "help" show this message'
+  $1 - \"help\" show this message"
 
 function spending_validation_receipt() {
   if [[ ! -s "$1" ]]; then
@@ -23,12 +23,15 @@ function spending_validation_receipt() {
 }
 
 function check_is_new_shop_exist() {
-  local last_shop_name=$(get_shop "$1")
-  local shop_list=$(echo $projectdir/tmp/shop_list)
-  local shops_counter=$(grep "$last_shop_name" $shop_list | wc -l)
+  local last_shop_name
+  local shop_list
+  local shops_counter
+  last_shop_name=$(get_shop "$1")
+  shop_list="$projectdir/tmp/shop_list"
+  shops_counter=$(grep -c "$last_shop_name" "$shop_list")
 
   if [[ $shops_counter -eq 0 ]]; then
-    rm -f $shop_list
+    rm -f "$shop_list"
   fi
 }
 
@@ -42,20 +45,22 @@ fi
 while true
 do
     uuid=$(uuidgen)
-    path=$(echo "$projectdir/receipts/$uuid")
+    path="$projectdir/receipts/$uuid"
     path_temp_receipt=$(mktemp)
 
     shops=$(get_shops | tr "_" " " | tr -d '"')
-    example=$(cat $projectdir/example)
+    example=$(cat "$projectdir/example")
     tempfile=$(mktemp)
-    echo "$example" > $tempfile
-    echo >> $tempfile
-    echo >> $tempfile
-    echo "LIST OF SHOPS" >> $tempfile
-    echo "$shops" >> $tempfile
+    echo "$example" > "$tempfile"
+    {
+      echo
+      echo
+      echo "LIST OF SHOPS"
+      echo "$shops"
+    } >> "$tempfile"
 
-    vi +start -O $path_temp_receipt $tempfile
-    spending_validation_receipt $path_temp_receipt
+    "$projectdir/nvim/bin/nvim" +start -O "$path_temp_receipt" "$tempfile"
+    spending_validation_receipt "$path_temp_receipt"
     spending_validation_status=$?
 
     if [[ $spending_validation_status -gt 0 ]]; then
@@ -63,7 +68,7 @@ do
       echo "Editor opening..."
       cat "$path_temp_receipt" > "$path"
       sleep 3
-      vi +start -O $path $tempfile
+      "$projectdir/nvim/bin/nvim" +start -O "$path" "$tempfile"
     else
       cat "$path_temp_receipt" > "$path"
     fi
@@ -73,6 +78,6 @@ do
     check_is_new_shop_exist "$uuid"    
 
     prompt="Add another receipt y/n: "
-    read -p "$prompt" input
+    read -r -p "$prompt" input
     [[ $input = "n" ]] && exit
 done
