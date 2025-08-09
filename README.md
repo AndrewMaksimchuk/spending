@@ -1,6 +1,6 @@
-## Receipt example
+# Receipt example
 
-```
+```txt
 atb
 18.07.2023 18:23:33
 243.71
@@ -68,10 +68,26 @@ See [usage](usage.md)
 - price
 - chunk delimeter
 
-###### Run only from this project directory
+#### Run only from this project directory
 
 `show_last_n_days.bash` - Show last added  
 receipts n days ago
+
+## Use R programming language
+
+Show list of installed libraries: `installed.packages()`  
+Install dplyr library use: `install.packages("tidyverse")` in R REPL.  
+Description of library: <https://cran.r-project.org/web/packages/dplyr/vignettes/base.html>
+Example of graph: <https://r-graph-gallery.com/37-barplot-with-number-of-observation.html>
+Example of R code: <https://github.com/PacktPublishing/R-Programming-By-Example/blob/master/Chapter03/vectorized_vs_unvectorized.R>
+
+- [x] price min mean max values for all period
+- [x] price min mean max values for all each month in selected year
+- [x] count for each month hom much time go to shop(spend money) and total in selected year
+- [x] count what shop is most visited 
+- [ ] what category of stuff most buy // after all receipts have category // check for this condition
+- [x] price count range for each month in selected year 
+- [x] for each shop count min max mean of price for each month and total in selected year
 
 ## Statistics description(how to understand)
 

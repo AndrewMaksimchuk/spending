@@ -4,3 +4,5 @@ test
 *.txt
 spending_data.zip
 *.service
+*.pdf
+Session.vim

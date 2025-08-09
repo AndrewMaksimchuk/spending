@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-# $1 - subcommands: "category"
+# $1 - subcommands: "category" "graph"
 
 
 projectdir=$(dirname $0)
@@ -320,6 +320,16 @@ function main
 
 if [[ "$1" = "category" ]]; then
     spending_category
+    exit
+fi
+
+if [[ "$1" = "graph" ]]; then
+    if command -v foobar &> /dev/null; then
+      echo "You need R programming language, please install first"
+      exit
+    fi
+
+    . "$projectdir/statistics.R.bash"
     exit
 fi
 
