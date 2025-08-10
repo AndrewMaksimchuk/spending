@@ -59,7 +59,7 @@ do
       echo "$shops"
     } >> "$tempfile"
 
-    "$projectdir/nvim/bin/nvim" +start -O "$path_temp_receipt" "$tempfile"
+    "$projectdir/nvim/bin/nvim" -c "source $projectdir/spending.nvim.plugin.lua" +start -O "$path_temp_receipt" "$tempfile"
     spending_validation_receipt "$path_temp_receipt"
     spending_validation_status=$?
 
