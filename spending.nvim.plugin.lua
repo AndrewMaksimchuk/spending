@@ -3,6 +3,8 @@ local timer = vim.loop.new_timer()
 local application_path = nil
 local complition_list_of_shop = nil
 local complition_list_of_category = nil
+local complition_list_of_image = nil
+local complition_list_of_goods = nil
 local line_index_shop = 1
 local line_index_date_time = 2
 local receipts_delimeter_goods = 4
@@ -140,6 +142,44 @@ local function complition_category()
   show_completion(complition_list_of_category)
 end
 
+local function dir(path)
+  local files = {}
+  local pfile = io.popen('ls "' .. path .. '"')
+
+  if pfile == nil then
+    return files
+  end
+
+  for filename in pfile:lines() do
+    table.insert(files, filename)
+  end
+
+  pfile:close()
+  return files
+end
+
+local function complition_image()
+  print("Select receipt image from list: ctrl+x ctrl+k")
+  vim.opt_local.dictionary = {'image'}
+
+  if complition_list_of_image == nil then
+    complition_list_of_image = dir(application_path .. "receipts_images")
+  end
+
+  show_completion(complition_list_of_image)
+end
+
+local function complition_goods()
+  print("Select goods from list: ctrl+x ctrl+k")
+  vim.opt_local.dictionary = {'goods'}
+
+  if complition_list_of_goods == nil then
+    complition_list_of_goods = get_list_complition("")
+  end
+
+  show_completion(complition_list_of_goods)
+end
+
 local function spending_completion (event)
     local current_line = vim.api.nvim_win_get_cursor(0)[1]
     local is_line_full, line_value = line_is_full()
@@ -162,10 +202,18 @@ local function spending_completion (event)
     end
 
     line_value = string.gsub(line_value, " ", "")
+
     if current_line > receipts_delimeter_meta and line_value == "category=" then
       return complition_category()
     end
 
+    if current_line > receipts_delimeter_meta and line_value == "image=" then
+      return complition_image()
+    end
+
+    if current_line > receipts_delimeter_goods then
+      return complition_goods()
+    end
 end
 
 application_path = spending_application_path()
