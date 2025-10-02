@@ -8,6 +8,8 @@ local line_index_date_time = 2
 local receipts_delimeter_goods = 4
 local receipts_delimeter_meta = 5
 
+vim.opt.completeopt = "menu,popup,noinsert"
+
 local function spending_application_path()
   local end_index = string.find(vim.v.progpath, "nvim")
   return string.sub(vim.v.progpath, 1, end_index - 1)
@@ -34,13 +36,18 @@ local function read_file(path)
 end
 
 local function show_completion(list)
-      timer:start(100, -1, vim.schedule_wrap(function() vim.fn.complete(vim.fn.col("."), list) end))
+  if timer == nil then
+    return ""
+  end
+  timer:start(100, -1, vim.schedule_wrap(function() vim.fn.complete(vim.fn.col("."), list) end))
+  return ""
 end
 
 local function normalize(data)
   local list = {}
   for index, value in ipairs(data) do
-    list[index] = string.gsub(value, '"', "")
+    local raw_str = string.gsub(value, '"', "")
+    list[index] = string.gsub(raw_str, '_', " ")
   end
   return list
 end
@@ -69,22 +76,25 @@ local function complition_shop()
       complition_list_of_shop = get_list_complition("tmp/shop_list")
     end
 
-    -- if mode == "InsertCharPre" then
-    --   print("InsertCharPre mode")
-    --   local insert_char_list = {}
-    --
-    --   for _, value in ipairs(complition_list_of_shop) do
-    --     if string.match(value, line_value) ~= nil then
-    --       table.insert(insert_char_list, value)
-    --     end
-    --   end
-    --   print(#insert_char_list)
-    --   show_completion(insert_char_list)
-    -- else
-    --   show_completion(complition_list_of_shop)
-    -- end
-
     show_completion(complition_list_of_shop)
+end
+
+local function complition_shop_filtered(word)
+  print("Write new shop or select available shop from list by using: ctrl+x ctrl+k")
+  vim.opt_local.dictionary = {'shops'}
+
+  if complition_list_of_shop == nil then
+    complition_list_of_shop = get_list_complition("tmp/shop_list")
+  end
+
+  local insert_char_list = {}
+
+  for _, value in ipairs(complition_list_of_shop) do
+    if string.match(value, word) ~= nil then
+      table.insert(insert_char_list, value)
+    end
+  end
+  show_completion(insert_char_list)
 end
 
 local function format_number_2(number)
@@ -98,7 +108,7 @@ end
 local function complition_date()
   print("Write date manualy or select from list(time always write yourself): ctrl+x ctrl+k")
   vim.opt_local.dictionary = {'date_time'}
-  local current_date = os.date("%d%m%Y")
+  local current_date = tostring(os.date("%d%m%Y"))
   local end_day = tonumber(string.sub(current_date, 1, 2))
   local month = tonumber(string.sub(current_date, 3, 4))
   local year = string.sub(current_date, 5, 8)
@@ -161,14 +171,28 @@ end
 application_path = spending_application_path()
 
 vim.api.nvim_create_autocmd({"InsertEnter", "CursorMovedI"}, {
--- vim.api.nvim_create_autocmd({"InsertEnter"}, {
   callback = function ()
     spending_completion("InsertEnter")
   end
 })
 
--- vim.api.nvim_create_autocmd({"InsertCharPre"}, {
---   callback = function ()
---     spending_completion("InsertCharPre")
---   end
--- })
+vim.api.nvim_create_autocmd({"InsertCharPre"}, {
+  callback = function ()
+    local curlen = vim.api.nvim_get_current_line()
+    local word = curlen .. vim.v.char
+    complition_shop_filtered(word)
+  end
+})
+
+vim.api.nvim_create_autocmd({"CompleteDone"}, {
+  callback = function ()
+    local complition_item = vim.v.completed_item.word
+
+    if complition_item == nil then
+      return
+    end
+
+    vim.api.nvim_set_current_line(complition_item)
+  end
+})
+

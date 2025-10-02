@@ -16,7 +16,7 @@ fi
 case $1 in 
 
     "add")
-    "$cwd/add.bash"
+    "$cwd/add.bash" $2
     ;;
 
     "total") 

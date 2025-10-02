@@ -1,24 +1,48 @@
 #compdef spending
 # Add competion for shell(zsh)
 
+_spending()
+{
+  local projectdir=$(dirname "$_comp_command2")
+  local category_list=()
+  for line in $(cat "$projectdir/category_list"); do
+      category_list+=("$line")
+  done
 
-local -a subcmds
-subcmds=(
- 'add:add new receipt, use nvim editor'
- 'total:show total spending cost' 
- 'show_day:show all receipts in specified day' 
- 'show_month:show all receipts in specified month' 
- 'show_year:show all receipts in specified year' 
- 'show_shop:show all receipts from selected shop' 
- 'stat:show statistics' 
- 'history:show history by months' 
- 'goods:show list of goods' 
- 'salary:the amount of expenses for each month'
- 'archive:pack or unpack receipts archive'
- 'image:start web server for load and save receipts images'
- 'web_server_start:start web server as service'
- 'web_server_stop:stop web server as service'
- 'search:search receipts by some text'
- 'category:show/add expense categories'
-)
-_describe 'command' subcmds
+	local context state state_descr line
+	typeset -A opt_args
+
+	_arguments -C '1: :->command' '2: :->add'
+
+	case $state in
+		(command)
+			local -a subcmds
+      subcmds=(
+       'add:add new receipt, use nvim editor'
+       'total:show total spending cost' 
+       'show_day:show all receipts in specified day' 
+       'show_month:show all receipts in specified month' 
+       'show_year:show all receipts in specified year' 
+       'show_shop:show all receipts from selected shop' 
+       'stat:show statistics' 
+       'history:show history by months' 
+       'goods:show list of goods' 
+       'salary:the amount of expenses for each month'
+       'archive:pack or unpack receipts archive'
+       'image:start web server for load and save receipts images'
+       'web_server_start:start web server as service'
+       'web_server_stop:stop web server as service'
+       'search:search receipts by some text'
+       'category:show/add expense categories'
+      )
+
+			_describe 'command' subcmds
+		;;
+
+		(add)
+      if [[ $words[2] = "add" ]]; then
+        _describe 'category_list' category_list
+      fi
+		;;
+	esac
+}

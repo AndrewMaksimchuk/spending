@@ -5,12 +5,11 @@ projectdir=$(dirname "$0")
 . "$projectdir/get_shops.bash"
 
 
-usage="Open nvim with empty file for add content of
-receipt.
-After add all information, run \`:xa\` for exit 
-and save document.
+usage="Open nvim with empty file for add content of receipt.
+After add all information, run \`:xa\` for exit and save document.
 Agruments:
-  $1 - \"help\" show this message"
+  $1 - [optional] \"help\" show this message or 
+  write category of shop"
 
 function spending_validation_receipt() {
   if [[ ! -s "$1" ]]; then
@@ -47,6 +46,11 @@ do
     uuid=$(uuidgen)
     path="$projectdir/receipts/$uuid"
     path_temp_receipt=$(mktemp)
+    cat "$projectdir/skeleton" >> "$path_temp_receipt"
+
+    if [[ -n $1 ]]; then
+      sed -i -e "s/category=/category=$1/g" "$path_temp_receipt"
+    fi
 
     shops=$(get_shops | tr "_" " " | tr -d '"')
     example=$(cat "$projectdir/example")
