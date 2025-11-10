@@ -3,6 +3,7 @@
 
 projectdir=$(dirname "$0")
 . "$projectdir/get_shops.bash"
+. "$projectdir/get_goods.bash"
 
 
 usage="Open nvim with empty file for add content of receipt.
@@ -19,6 +20,27 @@ function spending_validation_receipt() {
 
   awk -f "$projectdir/awk_validation" "$1"
   return $?
+}
+
+function spending_add_goods_if_not_exist() {
+  local goods=$(spending_get_goods "$1")
+  local goods_file="$projectdir/tmp/goods"
+
+  if [[ ! -e "$goods_file" ]]; then
+    touch "$goods_file"
+  fi
+
+  for words in "$goods"
+  do
+    echo "$goods"
+    if grep -Fxq "$words" "$goods_file"
+    then
+      echo 'exist'
+    else
+      echo 'not exist'
+      echo "$words" >> "$goods_file"
+    fi
+  done
 }
 
 function check_is_new_shop_exist() {
@@ -79,7 +101,8 @@ do
 
     [[ -e $path ]] && echo "$uuid was added" && echo "$path"
 
-    check_is_new_shop_exist "$uuid"    
+    check_is_new_shop_exist "$uuid"
+    spending_add_goods_if_not_exist "$path"
 
     prompt="Add another receipt y/n: "
     read -r -p "$prompt" input

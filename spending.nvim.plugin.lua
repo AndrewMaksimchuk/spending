@@ -9,12 +9,40 @@ local line_index_shop = 1
 local line_index_date_time = 2
 local receipts_delimeter_goods = 4
 local receipts_delimeter_meta = 5
+local file_debug_name = "spending_debug.txt"
+local is_category = false
+local is_image = false
 
 vim.opt.completeopt = "menu,popup,noinsert"
 
 local function spending_application_path()
   local end_index = string.find(vim.v.progpath, "nvim")
   return string.sub(vim.v.progpath, 1, end_index - 1)
+end
+
+local file_debug_path = spending_application_path() .. file_debug_name
+
+local function debug_write(message)
+  local file = io.open(file_debug_path, "a")
+
+  if file == nil then
+    return
+  end
+
+  if message == nil then
+    message = "Message is nil"
+  end
+
+  if message == true then
+    message = "true"
+  end
+
+  if message == false then
+    message = "false"
+  end
+
+  file:write("[" .. os.date() .. "] " .. message .. "\n")
+  file:close()
 end
 
 local function read_file(path)
@@ -71,17 +99,19 @@ local function line_is_full()
 end
 
 local function complition_shop()
-    print("Write new shop or select available shop from list by using: ctrl+x ctrl+k")
-    vim.opt_local.dictionary = {'shops'}
+  debug_write("Function: complition_shop")
+  print("Write new shop or select available shop from list by using: ctrl+x ctrl+k")
+  vim.opt_local.dictionary = {'shops'}
 
-    if complition_list_of_shop == nil then
-      complition_list_of_shop = get_list_complition("tmp/shop_list")
-    end
+  if complition_list_of_shop == nil then
+    complition_list_of_shop = get_list_complition("tmp/shop_list")
+  end
 
-    show_completion(complition_list_of_shop)
+  show_completion(complition_list_of_shop)
 end
 
 local function complition_shop_filtered(word)
+  debug_write("Function: complition_shop_filtered")
   print("Write new shop or select available shop from list by using: ctrl+x ctrl+k")
   vim.opt_local.dictionary = {'shops'}
 
@@ -108,6 +138,7 @@ local function format_number_2(number)
 end
 
 local function complition_date()
+  debug_write("Function: complition_date")
   print("Write date manualy or select from list(time always write yourself): ctrl+x ctrl+k")
   vim.opt_local.dictionary = {'date_time'}
   local current_date = tostring(os.date("%d%m%Y"))
@@ -132,6 +163,7 @@ local function complition_date()
 end
 
 local function complition_category()
+  debug_write("Function: complition_category")
   print("Select goods/shop category from list: ctrl+x ctrl+k")
   vim.opt_local.dictionary = {'category'}
 
@@ -139,6 +171,7 @@ local function complition_category()
     complition_list_of_category = get_list_complition("category_list")
   end
 
+  is_category = true
   show_completion(complition_list_of_category)
 end
 
@@ -159,6 +192,7 @@ local function dir(path)
 end
 
 local function complition_image()
+  debug_write("Function: complition_image")
   print("Select receipt image from list: ctrl+x ctrl+k")
   vim.opt_local.dictionary = {'image'}
 
@@ -166,78 +200,185 @@ local function complition_image()
     complition_list_of_image = dir(application_path .. "receipts_images")
   end
 
+  is_image = true
   show_completion(complition_list_of_image)
 end
 
 local function complition_goods()
+  debug_write("Function: complition_goods")
   print("Select goods from list: ctrl+x ctrl+k")
   vim.opt_local.dictionary = {'goods'}
 
   if complition_list_of_goods == nil then
-    complition_list_of_goods = get_list_complition("")
+    complition_list_of_goods = get_list_complition("tmp/goods")
   end
 
   show_completion(complition_list_of_goods)
 end
 
+local function complition_goods_filtered(word)
+  debug_write("Function: complition_goods_filtered")
+  print("Write new goods or select available from list by using: ctrl+x ctrl+k")
+  vim.opt_local.dictionary = {'goods'}
+
+  if complition_list_of_goods == nil then
+    complition_list_of_goods = get_list_complition("tmp/goods")
+  end
+
+  local insert_char_list = {}
+
+  for _, value in ipairs(complition_list_of_goods) do
+    if string.gmatch(value, word) ~= nil then
+      table.insert(insert_char_list, value)
+    end
+  end
+  show_completion(insert_char_list)
+end
+
+local function get_goods_section()
+  local lines = vim.api.nvim_buf_line_count(0)
+  local values = vim.api.nvim_buf_get_lines(0, 0, lines, true)
+  local range = {}
+  for index, value in ipairs(values) do
+    if value == "=" then
+      table.insert(range, index)
+    end
+  end
+  return range
+end
+
+local function is_in_goods_section(line_number)
+  local range = get_goods_section()
+  local head = range[1]
+  local tail = range[2]
+
+  debug_write('head: ' .. head)
+  debug_write('tail: ' .. tail)
+
+  if line_number > head and line_number < tail then
+    return true
+  end
+
+  return false
+end
+
 local function spending_completion (event)
-    local current_line = vim.api.nvim_win_get_cursor(0)[1]
-    local is_line_full, line_value = line_is_full()
+  debug_write("Function: spending_completion")
+  local current_line = vim.api.nvim_win_get_cursor(0)[1]
+  local is_line_full, line_value = line_is_full()
 
-    if current_line < receipts_delimeter_goods and is_line_full and event == "InsertEnter" then
-      return
-    end
+  if current_line < receipts_delimeter_goods and is_line_full and event == "InsertEnter" then
+    return
+  end
 
-    if timer == nil then
-      print("Can`t show word completion")
-      return
-    end
+  if timer == nil then
+    print("Can`t show word completion")
+    return
+  end
 
-    if current_line == line_index_shop then
-      return complition_shop()
-    end
+  if current_line == line_index_shop then
+    return complition_shop()
+  end
 
-    if current_line == line_index_date_time then
-      return complition_date()
-    end
+  if current_line == line_index_date_time then
+    return complition_date()
+  end
 
-    line_value = string.gsub(line_value, " ", "")
+  if is_in_goods_section(current_line) then
+    return complition_goods()
+  end
 
-    if current_line > receipts_delimeter_meta and line_value == "category=" then
-      return complition_category()
-    end
+  line_value = string.gsub(line_value, " ", "")
 
-    if current_line > receipts_delimeter_meta and line_value == "image=" then
-      return complition_image()
-    end
+  if current_line > receipts_delimeter_meta and line_value == "category=" then
+    return complition_category()
+  end
 
-    if current_line > receipts_delimeter_goods then
-      return complition_goods()
-    end
+  if current_line > receipts_delimeter_meta and line_value == "image=" then
+    return complition_image()
+  end
+end
+
+local function spending_completion_with_search()
+  local current_line = vim.api.nvim_win_get_cursor(0)[1]
+  local curlen = vim.api.nvim_get_current_line()
+  local word = curlen .. vim.v.char
+
+  if current_line > receipts_delimeter_meta and curlen == "category=" then
+    return complition_category()
+  end
+
+  if current_line > receipts_delimeter_meta and curlen == "image=" then
+    return complition_image()
+  end
+
+  if current_line == line_index_shop then
+    return complition_shop_filtered(word)
+  end
+
+  local next_line_value = vim.api.nvim_buf_get_lines(0, current_line, current_line + 1, false)
+  debug_write(vim.inspect(next_line_value))
+  debug_write('next_line_value:')
+  debug_write(next_line_value[1])
+  debug_write('current_line: ' .. current_line)
+
+  if is_in_goods_section(current_line) then
+    return complition_goods_filtered(word)
+  end
 end
 
 application_path = spending_application_path()
+debug_write("Start session\n=============")
 
-vim.api.nvim_create_autocmd({"InsertEnter", "CursorMovedI"}, {
-  callback = function ()
-    spending_completion("InsertEnter")
+vim.api.nvim_create_autocmd({"CursorMovedI"}, {
+  callback = function (event)
+    debug_write("Event: " .. event.event)
+    debug_write(vim.inspect(event))
+    local is_line_full, _ = line_is_full()
+
+    if is_line_full then
+      spending_completion_with_search()
+    else
+      spending_completion(event.event)
+    end
+  end
+})
+
+vim.api.nvim_create_autocmd({"InsertEnter"}, {
+  callback = function (event)
+    debug_write("Event: " .. event.event)
+    debug_write(vim.inspect(event))
+    spending_completion(event.event)
   end
 })
 
 vim.api.nvim_create_autocmd({"InsertCharPre"}, {
   callback = function ()
-    local curlen = vim.api.nvim_get_current_line()
-    local word = curlen .. vim.v.char
-    complition_shop_filtered(word)
+    debug_write("Events: InsertCharPre")
+    spending_completion_with_search()
   end
 })
 
 vim.api.nvim_create_autocmd({"CompleteDone"}, {
   callback = function ()
+    debug_write("Events: CompleteDone")
     local complition_item = vim.v.completed_item.word
 
     if complition_item == nil then
       return
+    end
+
+    local curlen = vim.api.nvim_get_current_line()
+    debug_write('curlen: ' .. curlen)
+
+    if is_category then
+      complition_item = "category=" .. complition_item
+      is_category = false
+    end
+
+    if is_image then
+      complition_item = "image=" .. complition_item
+      is_image = false
     end
 
     vim.api.nvim_set_current_line(complition_item)
