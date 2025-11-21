@@ -12,6 +12,7 @@ local receipts_delimeter_meta = 5
 local file_debug_name = "spending_debug.txt"
 local is_category = false
 local is_image = false
+local cursor = nil
 
 vim.opt.completeopt = "menu,popup,noinsert"
 
@@ -334,11 +335,19 @@ vim.api.nvim_create_autocmd({"CursorMovedI"}, {
   callback = function (event)
     debug_write("Event: " .. event.event)
     debug_write(vim.inspect(event))
-    local is_line_full, _ = line_is_full()
+    local cursor_current = vim.api.nvim_win_get_cursor(0)
 
-    if is_line_full then
-      spending_completion_with_search()
-    else
+    if cursor == nil then
+      cursor = cursor_current
+    end
+
+    -- if cursor[1] == cursor_current[1] and cursor_current[2] > 0 then
+    --     cursor = cursor_current
+    --     spending_completion_with_search()
+    -- end
+
+    if cursor[1] ~= cursor_current[1] then
+      cursor = cursor_current
       spending_completion(event.event)
     end
   end
@@ -348,6 +357,7 @@ vim.api.nvim_create_autocmd({"InsertEnter"}, {
   callback = function (event)
     debug_write("Event: " .. event.event)
     debug_write(vim.inspect(event))
+    cursor = vim.api.nvim_win_get_cursor(0)
     spending_completion(event.event)
   end
 })
@@ -355,6 +365,7 @@ vim.api.nvim_create_autocmd({"InsertEnter"}, {
 vim.api.nvim_create_autocmd({"InsertCharPre"}, {
   callback = function ()
     debug_write("Events: InsertCharPre")
+    cursor = vim.api.nvim_win_get_cursor(0)
     spending_completion_with_search()
   end
 })
@@ -362,26 +373,27 @@ vim.api.nvim_create_autocmd({"InsertCharPre"}, {
 vim.api.nvim_create_autocmd({"CompleteDone"}, {
   callback = function ()
     debug_write("Events: CompleteDone")
-    local complition_item = vim.v.completed_item.word
+    cursor = vim.api.nvim_win_get_cursor(0)
+    -- local complition_item = vim.v.completed_item.word
 
-    if complition_item == nil then
-      return
-    end
-
-    local curlen = vim.api.nvim_get_current_line()
-    debug_write('curlen: ' .. curlen)
-
-    if is_category then
-      complition_item = "category=" .. complition_item
-      is_category = false
-    end
-
-    if is_image then
-      complition_item = "image=" .. complition_item
-      is_image = false
-    end
-
-    vim.api.nvim_set_current_line(complition_item)
+--     if complition_item == nil then
+--       return
+--     end
+--
+--     local curlen = vim.api.nvim_get_current_line()
+--     debug_write('curlen: ' .. curlen)
+--
+--     if is_category then
+--       complition_item = "category=" .. complition_item
+--       is_category = false
+--     end
+--
+--     if is_image then
+--       complition_item = "image=" .. complition_item
+--       is_image = false
+--     end
+--
+--     vim.api.nvim_set_current_line(complition_item)
   end
 })
 
