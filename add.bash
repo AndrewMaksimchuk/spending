@@ -23,8 +23,9 @@ function spending_validation_receipt() {
 }
 
 function spending_add_goods_if_not_exist() {
-  local goods=$(spending_get_goods "$1")
-  local goods_file="$projectdir/tmp/goods"
+  local goods goods_file
+  goods=$(spending_get_goods "$1")
+  goods_file="$projectdir/tmp/goods"
 
   if [[ ! -e "$goods_file" ]]; then
     touch "$goods_file"
@@ -35,9 +36,8 @@ function spending_add_goods_if_not_exist() {
     echo "$goods"
     if grep -Fxq "$words" "$goods_file"
     then
-      echo 'exist'
+      echo
     else
-      echo 'not exist'
       echo "$words" >> "$goods_file"
     fi
   done
