@@ -66,11 +66,12 @@ local function read_file(path)
     return list
 end
 
-local function show_completion(list)
+local function show_completion(list, startcol)
   if timer == nil then
     return ""
   end
-  timer:start(100, -1, vim.schedule_wrap(function() vim.fn.complete(vim.fn.col("."), list) end))
+  local col = startcol or vim.fn.col(".")
+  timer:start(100, -1, vim.schedule_wrap(function() vim.fn.complete(col, list) end))
   return ""
 end
 
@@ -138,6 +139,18 @@ local function format_number_2(number)
   end
 end
 
+local function is_leap_year(year)
+  return (year % 4 == 0 and year % 100 ~= 0) or (year % 400 == 0)
+end
+
+local function days_in_month(year, month)
+  local month_days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+  if month == 2 and is_leap_year(year) then
+    return 29
+  end
+  return month_days[month] or 31
+end
+
 local function complition_date()
   debug_write("Function: complition_date")
   print("Write date manualy or select from list(time always write yourself): ctrl+x ctrl+k")
@@ -161,6 +174,31 @@ local function complition_date()
   end
 
   show_completion(complition_list)
+end
+
+local function complition_date_day(day_text)
+  debug_write("Function: complition_date_day")
+  vim.opt_local.dictionary = {'date_time'}
+  local day = tonumber(day_text)
+
+  if day == nil or day < 1 or day > 31 then
+    return
+  end
+
+  local current_year = tonumber(os.date("%Y"))
+  local years = { current_year, current_year - 1 }
+  local completion_list = {}
+
+  for _, year in ipairs(years) do
+    for month = 1, 12 do
+      if day <= days_in_month(year, month) then
+        local item = format_number_2(day) .. "." .. format_number_2(month) .. "." .. tostring(year)
+        table.insert(completion_list, item)
+      end
+    end
+  end
+
+  show_completion(completion_list, 1)
 end
 
 local function complition_category()
@@ -317,10 +355,13 @@ local function spending_completion_with_search()
     return complition_shop_filtered(word)
   end
 
-  local next_line_value = vim.api.nvim_buf_get_lines(0, current_line, current_line + 1, false)
-  debug_write(vim.inspect(next_line_value))
-  debug_write('next_line_value:')
-  debug_write(next_line_value[1])
+  if current_line == line_index_date_time then
+    local current_line_text = vim.api.nvim_get_current_line()
+    if vim.v.char == "." and string.match(current_line_text, "^%d%d?$") then
+      return complition_date_day(current_line_text)
+    end
+  end
+
   debug_write('current_line: ' .. current_line)
 
   if is_in_goods_section(current_line) then
