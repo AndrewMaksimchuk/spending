@@ -6,3 +6,5 @@ spending_data.zip
 *.service
 *.pdf
 Session.vim
+.errors_bash
+*.patch
