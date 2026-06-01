@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
 
-projectdir=$(dirname $0)
+export projectdir
+
+projectdir=$(dirname "$0")
