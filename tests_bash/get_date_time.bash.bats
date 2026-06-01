@@ -12,6 +12,4 @@ load "$PWD/tests_bash/bats_assert/load"
 
     assert_success
     assert_output "19.04.2025 14:29:12" 
-    # [ "$status" -eq 0 ]
-    # [ "$output" = "19.04.2025 14:29:12" ]
 }

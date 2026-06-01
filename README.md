@@ -29,8 +29,7 @@ and write category name as in example above.
 
 ## Install
 
-Run script `./install.bash` with `sudo` to see  
-steps + create simlynk + shell completion(bash/zsh).
+Run script `./install.bash` to see steps + shell completion(bash/zsh).
 
 - Add to yout shell config file:  
   "SPENDING_INSTALL=path_to_this_directory"

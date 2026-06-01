@@ -1,3 +1,5 @@
+.PHONY: check format tests_bash tests_lua tests
+
 check:
 	@echo "Check bash scripts"
 	bash -n *.bash

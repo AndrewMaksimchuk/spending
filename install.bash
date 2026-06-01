@@ -1,33 +1,72 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+trap 'echo "ERROR on line $LINENO"; exit 1' ERR
 
-cwd=$(dirname $0)
-path=$(readlink -f $cwd)
+cwd=$(dirname "$0")
+path=$(readlink -f "$cwd")
 
+function add_completion_bash() {
+    local completion_file="$path/spending_complete"
 
-function addpath() {
-    user=$(who -s | head -1 | awk '{print $1}')
-    config=$(echo "/home/$user/$1")
+    if [[ ! -f "$completion_file" ]]; then
+        echo "Missing spending_complete"
+        return 0
+    fi
 
-    [[ ! -e $config ]] && return 0
-
-    is_set_env=$(cat $config | grep "SPENDING_INSTALL")
-    [[ -n $is_set_env ]] && return 0
-
-    echo >> $config
-    echo "export SPENDING_INSTALL=\"$path\"" >> $config
-    echo 'export PATH="$PATH:$SPENDING_INSTALL"' >> $config
+    echo "Add completion for bash"
+    local completion_directory=$HOME/.local/share/bash-completion/completions
+    mkdir -p "$completion_directory"
+    cp -f "$completion_file" "$completion_directory"
 }
 
-mkdir "$path/tmp"
+function add_completion_zsh() {
+    local completion_file="$path/_spending"
 
+    if [[ ! -f "$completion_file" ]]; then
+        echo "Missing _spending"
+        return 0
+    fi
+
+    echo "Add completion for zsh(oh-my-zsh)"
+    local completion_directory=$HOME/.oh-my-zsh/completions/
+    mkdir -p "$completion_directory"
+    cp -f "$completion_file" "$completion_directory"
+}
+
+function add_completions() {
+    add_completion_bash
+    add_completion_zsh
+}
+
+function addpath() {
+    local config="$HOME/$1"
+
+    if [[ ! -f "$config" ]]; then
+        return 0
+    fi
+
+    if grep -q 'SPENDING_INSTALL' "$config"; then
+        return 0
+    fi
+
+    echo "Add SPENDING_INSTALL to PATH variable in $1"
+    {
+        echo ""
+        echo "export SPENDING_INSTALL=\"$path\""
+        echo 'export PATH="$PATH:$SPENDING_INSTALL"'
+    } >> "$config"
+}
+
+mkdir -p "$path/tmp"
 addpath ".bashrc"
 addpath ".zshrc"
+add_completions
 
-
-cp -f $cwd/spending_complete /etc/bash_completion.d/
-
-
-if [[ -d /usr/share/zsh/vendor-completions/ ]]; then
-    cp -f $cwd/_spending /usr/share/zsh/vendor-completions/
-fi
+echo "--------------------------------------------------"
+echo "Installation complete."
+echo "Restart your shell or run:"
+echo "  source ~/.bashrc"
+echo "or"
+echo "  source ~/.zshrc"
+echo "--------------------------------------------------"
