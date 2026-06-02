@@ -1,6 +1,6 @@
 # Receipt example
 
-```txt
+```receipt
 atb
 18.07.2023 18:23:33
 243.71
@@ -121,3 +121,19 @@ ordered from low to high.
 The range is the difference between the smallest  
 and the largest value of the data.  
 Range is the simplest measure of variation.
+
+## Development
+
+Makefile included.
+
+For testing bash scripts used `bats` that include to this repository:
+
+- https://github.com/bats-core/bats-core
+- https://github.com/bats-core/bats-file
+- https://github.com/bats-core/bats-assert
+
+For testing neovim plugin, lua script with neovim api, 
+used `nvim --headless` with only `pcall()` and `assert()`.
+
+For testing javascript, Node.js web server, for now no tests.
+
