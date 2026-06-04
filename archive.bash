@@ -20,7 +20,7 @@ if [[ $1 = "unzip" ]]; then
         exit
     fi
 
-    unzip -o $2 -d "$projectdir" 1>/dev/null
+    unzip -o "$2" -d "$projectdir" 1>/dev/null
     echo "Archive was unpack to $projectdir"
     exit
 fi
