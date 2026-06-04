@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 
+# shellcheck disable=SC2016
 usage='Delete all receipts and temp files
 Agruments:
   $1 - "help" show this message'
@@ -12,8 +13,8 @@ if [[ $1 = "help" ]]; then
 fi
 
 
-project_dir=$(dirname $0)
+project_dir=$(dirname "$0")
 
 
-rm -rf $project_dir/receipts/*
-rm -rf $project_dir/tmp/*
+rm -rf "$project_dir/receipts/*"
+rm -rf "$project_dir/tmp/*"
