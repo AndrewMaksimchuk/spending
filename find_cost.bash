@@ -5,28 +5,25 @@
 . get_price.bash
 
 
-tmp=$(echo $projectdir/tmp/find_cost)
-rm -f $tmp
-
-
-price=0
+tmp="$projectdir/tmp/find_cost"
+rm -f "$tmp"
 
 
 for file in $receipts_files
 do
-    current_price=$(get_price $file)
-    echo "$current_price $file" >> $tmp
+    current_price=$(get_price "$file")
+    echo "$current_price $file" >> "$tmp"
 done
 
 
 [[ ! -e $tmp ]] && exit
 
 
-finded=$(cat $tmp | grep $1)
+finded=$(grep -F "$1" "$tmp")
 
 
 if [[ -n $finded ]]; then
-    filename=$(echo $finded | awk '{print $2}')
-    echo $filename
-    cat $projectdir/receipts/$filename
+    filename=$(awk '{print $2}' <<< "$finded")
+    echo "$filename"
+    cat "$projectdir/receipts/$filename"
 fi

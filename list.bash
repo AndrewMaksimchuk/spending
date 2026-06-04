@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 
-cwd=$(dirname $0)
+export receipts_files
 
-
-. $cwd/projectdir.bash
-
-
-receipts_files=$(ls $projectdir/receipts/)
+projectdir=$(dirname "$0")
+receipts_files=$(ls "$projectdir/receipts/")
